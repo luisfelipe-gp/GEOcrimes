@@ -1,103 +1,118 @@
-import Image from "next/image";
+"use client"
+
+import { useState } from 'react';
+import MapComponent from './_components/MapComponent';
+import ReportModal from './_components/ReportModal';
+import { CountrySelect } from "react-country-state-city";
+import "react-country-state-city/dist/react-country-state-city.css";
+import {useSearchAPI, useCrimeBar, useModalSidebar} from "./_store/store";
+import CrimeSidebar from "./_components/CrimeSidebar";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [country, setCountry] = useState(null);
+  /* const [currentState, setCurrentState] = useState(null);
+  const [currentCity, setCurrentCity] = useState(null);
+  const [searchResult, setSearchResult] = useState(); */
+  const{setCurrentSearch}=useSearchAPI()
+  const{collapsedBar, setCollapsedBar}=useModalSidebar()
+  const{collapsedCrimeBar, setCollapsedCrimeBar}=useCrimeBar()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const handleSearch = () => {
+    console.log("country", country)
+    if (!(country as any)?.name) return;
+    
+    fetch(`https://geocrimes.onrender.com/api/geo/getLocation?country=${country?.name}`)
+      .then(response => response.json())
+      .then(data => {
+        // Manejar los resultados
+        console.log("dataSearch", data)
+        setCurrentSearch(data)
+      })
+      .catch(error => {
+        console.log('Error:', error)
+      });
+  };
+
+  return (
+    <div>
+      <main className="min-h-screen bg-blue-50">
+      {/* Header */}
+      <header className="bg-indigo-300 text-gray-800 p-6 shadow-md border-b border-gray-200">
+        <div className="mb-6 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-1">
+            <h1 className="text-4xl font-bold text-slate-800">Mapa de Denuncias</h1>
+            <p className="text-gray-700">Reporta incidentes en tu comunidad</p>
+          </div>
+          <button
+            onClick={() => {
+              setIsModalOpen(true)
+              setCollapsedBar(!collapsedBar)
+            }}
+            className="bg-rose-400 hover:bg-rose-500 text-white px-5 py-2 rounded-xl font-medium shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5"
+            /* className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-md font-medium transition-colors shadow-sm hover:shadow-md whitespace-nowrap" */
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Agregar Denuncia
+          </button>
         </div>
+        
+        <div className="bg-gray-50 rounded-lg p-4 flex flex-col md:flex-row gap-4 items-stretch justify-between border border-gray-200">
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="relative"> {/* Añadido z-50 para el select */}
+              <CountrySelect
+                containerClassName="form-group"
+                inputClassName=" w-full p-3 rounded-md border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm"
+                onChange={(_country) => {
+                  console.log("_country",_country)
+                  setCountry((_country as any))
+                }}
+                onTextChange={(text) => {
+                  console.log("_country text",text)
+                  if (text?.target.value === " " || text?.target?.value === "") {
+                    setCountry(null)
+                    /* setCurrentState(null)
+                    setCurrentCity(null) */
+                  }
+                }}
+                placeHolder="Selecciona un País"
+              />
+            </div>
+            
+            <button
+              onClick={handleSearch}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              disabled={!country}
+            >
+              Buscar Denuncias
+            </button>
+          </div>
+          
+          <button
+            onClick={() => {
+              console.log("click")
+              setCollapsedCrimeBar(!collapsedCrimeBar)
+            }}
+            className="bg-white hover:bg-gray-100 text-indigo-700 px-6 py-3 rounded-md font-medium transition-colors border border-indigo-300 shadow-sm hover:shadow-md whitespace-nowrap"
+          >
+            Ver estadísticas
+          </button>
+        </div>
+      </header>
+
+      {/* Tu mapa y otros componentes */}
+      {collapsedCrimeBar && (
+        <CrimeSidebar/>  
+      )}       
+      {/* Mapa */}
+      <div className="p-4 z-10 relative">
+        <MapComponent  isModalOpen={isModalOpen}/>
+      </div>
+
+      {/* Modal */}
+      {collapsedBar && (
+        <ReportModal onClose={() => setIsModalOpen(false)} isModalOpen={isModalOpen} />
+      )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
