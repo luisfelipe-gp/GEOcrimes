@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Fuerza texto oscuro y fondo claro en las opciones del dropdown */
+.rcsc-dropdown ul li {
+  background-color: white !important;
+  color: black !important;
+}
+
+.rcsc-dropdown ul li:hover {
+  background-color: #f3f4f6 !important; /* Tailwind gray-100 */
+  color: black !important;
+}

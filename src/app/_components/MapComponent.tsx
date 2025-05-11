@@ -207,9 +207,9 @@ export default function MapComponent() {
 
   /* Handle getLocation */
   const handleSearch = (countryName: any) => {
-
-    if (!countryName) return;
     
+    if (!countryName) return;
+    /* fetch(`https://mv960jtm-3000.use2.devtunnels.ms/api/geo/getLocation?country=${countryName}`) */
     fetch(`https://geocrimes.onrender.com/api/geo/getLocation?country=${countryName}`)
       .then(response => response.json())
       .then(data => {
@@ -391,7 +391,7 @@ export default function MapComponent() {
     // Inicializar mapa
     const map = new Map({
       target: mapRef.current,
-      layers: [baseLayer, paisesLayer, reportLayer, reportLayerNewPins],
+      layers: [baseLayer, paisesLayer, reportLayerNewPins],
       view: new View({
         center: fromLonLat([-74.08175, 4.60971]), // Bogotá
         zoom: 6,
