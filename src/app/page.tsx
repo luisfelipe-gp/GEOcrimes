@@ -58,8 +58,8 @@ export default function Home() {
         
         <div className="bg-gray-50 rounded-lg p-4 flex flex-col md:flex-row gap-4 items-stretch justify-between border border-gray-200">
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="relative"> {/* Añadido z-50 para el select */}
-              <CountrySelect
+            <div className="">
+              {/* <CountrySelect
                 containerClassName="form-group"
                 inputClassName=" w-full p-3 rounded-md border border-gray-300 bg-white text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent shadow-sm"
                 onChange={(_country) => {
@@ -70,21 +70,21 @@ export default function Home() {
                   console.log("_country text",text)
                   if (text?.target.value === " " || text?.target?.value === "") {
                     setCountry(null)
-                    /* setCurrentState(null)
-                    setCurrentCity(null) */
                   }
                 }}
                 placeHolder="Selecciona un País"
-              />
+              /> */}
+              <p className="text-gray-700">Haz clic sobre un país para ver las denuncias registradas en esa región.</p>
+              <p className="text-gray-700">Explora el mapa interactivo y selecciona un país para conocer más sobre los reportes realizados.</p>
             </div>
             
-            <button
+            {/* <button
               onClick={handleSearch}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-md font-medium transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
               disabled={!country}
             >
               Buscar Denuncias
-            </button>
+            </button> */}
           </div>
           
           <button
