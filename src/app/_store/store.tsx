@@ -1,7 +1,14 @@
 import { number } from 'framer-motion';
 import { create } from 'zustand';
 
-export const useModal = create((set: any) => ({
+// 1. useModal
+interface ModalState {
+  openModal: boolean;
+  setOpenModal: (openModal: boolean) => void;
+}
+
+
+export const useModal = create<ModalState>((set: any) => ({
     openModal: true,
     setOpenModal: (openModal: any) => set({ openModal }),
 }))
@@ -16,12 +23,30 @@ export const useModalSidebar = create<ModalSidebarState>((set: any) => ({
   setCollapsedBar: (collapsedBar: any) => set({ collapsedBar: collapsedBar }),
 }))
 
-export const useCrimeBar = create((set: any) => ({
+
+// 3. useCrimeBar
+interface CrimeBarState {
+  collapsedCrimeBar: boolean;
+  setCollapsedCrimeBar: (collapsedCrimeBar: boolean) => void;
+}
+
+export const useCrimeBar = create<CrimeBarState>((set: any) => ({
   collapsedCrimeBar: false,
   setCollapsedCrimeBar: (collapsedCrimeBar: any) => set({ collapsedCrimeBar: collapsedCrimeBar }),
 }))
 
-export const useUserData = create((set: any) => ({
+// 4. useUserData
+interface UserDataState {
+  user: any | null;
+  loading: boolean;
+  errorUser: any | null;
+  setUser: (newuser: any) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: any) => void;
+  clearUser: () => void;
+}
+
+export const useUserData = create<UserDataState>((set: any) => ({
   user: null,
   loading: true,
   errorUser: null,
@@ -31,8 +56,17 @@ export const useUserData = create((set: any) => ({
   clearUser: () => set({ user: null, loading: false, errorUser: null }),
 }))
 
+// 5. useSearchAPI
+interface SearchAPIState {
+  currentSearch: any | null;
+  zoomObject: string;
+  currentDataCountry: any | null;
+  setCurrentSearch: (currentSearch: any) => void;
+  setZoomObject: (zoomObject: string) => void;
+  setCurrentDataCountry: (currentDataCountry: any) => void;
+}
 
-export const useSearchAPI = create((set: any) => ({
+export const useSearchAPI = create<SearchAPIState>((set: any) => ({
   currentSearch: null,
   zoomObject: "",
   currentDataCountry: null,
@@ -41,9 +75,14 @@ export const useSearchAPI = create((set: any) => ({
   setCurrentDataCountry: (currentDataCountry: any) => set({currentDataCountry: currentDataCountry }),
 }))
 
+// 6. useDenunciaData
+interface DenunciaDataState {
+  currentDenuncia: { lat: number; lng: number };
+  setCurrentDenuncia: (newData: Partial<{ lat: number; lng: number }>) => void;
+}
 
-export const useDenunciaData = create((set: any, get:any) => ({
-  currentDenuncia: {lat: number, lng: number},
+export const useDenunciaData = create<DenunciaDataState>((set, get) => ({
+  currentDenuncia: {lat: 0, lng: 0},
   setCurrentDenuncia: (newData: any) =>
     set({ currentDenuncia: { ...get().currentDenuncia, ...newData } }),
 }))

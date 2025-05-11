@@ -105,7 +105,7 @@ export default function Home() {
       )}       
       {/* Mapa */}
       <div className="p-4 z-10 relative">
-        <MapComponent  isModalOpen={isModalOpen}/>
+        <MapComponent/>
       </div>
 
       {/* Modal */}

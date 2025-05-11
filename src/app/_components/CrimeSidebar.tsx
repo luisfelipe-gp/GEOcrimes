@@ -2,6 +2,49 @@ import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaExclamationTriangle, FaCity, FaTimes } from 'react-icons/fa';
 import { useSearchAPI, useCrimeBar} from "../_store/store";
 
+// Tipos base para la estructura de datos
+interface Location {
+  id: string;
+  typeCrime: string;
+  // Puedes agregar más propiedades según necesites
+}
+
+interface Zone {
+  id: string;
+  zone: string;
+  locations: Location[];
+}
+
+interface City {
+  id: string;
+  city: string;
+  zones: Zone[];
+  totalCrimes?: number;
+  sortedZones?: Zone[];
+}
+
+interface CountryData {
+  country: {
+    country: string;
+    cities: City[];
+  };
+}
+
+// Tipos para los props de los componentes
+interface CityListProps {
+  cities: (City & { totalCrimes: number; sortedZones: Zone[] })[];
+}
+
+interface CrimeStatsProps {
+  cities: (City & { totalCrimes: number; sortedZones: Zone[] })[];
+}
+
+// Tipo para el store de SearchAPI
+interface SearchAPIState {
+  currentDataCountry: CountryData | null;
+  // ... otras propiedades del store
+}
+
 const CrimeSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('cities');
@@ -44,8 +87,8 @@ const CrimeSidebar = () => {
     }
  */
     // Calcular estadísticas (maneja tanto el caso con datos como sin datos)
-const citiesWithStats = (currentDataCountry as any).country?.cities?.length > 0 
-? (currentDataCountry as any).country?.cities.map((city: any) => {
+const citiesWithStats = currentDataCountry.country?.cities?.length > 0 
+? currentDataCountry.country?.cities.map((city: city) => {
     const totalCrimes = city.zones.reduce((sum: any, zone: any) => sum + zone.locations.length, 0);
     const sortedZones = [...city.zones].sort((a, b) => b.locations.length - a.locations.length);
     
@@ -57,10 +100,10 @@ const citiesWithStats = (currentDataCountry as any).country?.cities?.length > 0
   }).sort((a: any, b: any) => b.totalCrimes - a.totalCrimes)
 : []; // Array vacío si no hay ciudades
 
-  const toggleCollapse = () => {
+  /* const toggleCollapse = () => {
     setCollapsed(!collapsed);
     setCollapsedCrimeBar(!collapsedCrimeBar);
-  };
+  }; */
 
 
   return (
@@ -106,7 +149,7 @@ const citiesWithStats = (currentDataCountry as any).country?.cities?.length > 0
   );
 };
 
-const CityList = ({ cities }: any) => {
+const CityList: React.FC<CityListProps> = ({ cities }) => {
   if (cities?.length === 0) {
     return (
       <div className="text-gray-500 text-center py-8">
@@ -161,8 +204,8 @@ const CityList = ({ cities }: any) => {
   );
 };
 
-const CrimeStats = ({ cities }:any) => {
-  const totalCrimes = cities.reduce((sum: any, city: any) => sum + city.totalCrimes, 0);
+const CrimeStats: React.FC<CrimeStatsProps> = ({ cities }) => {
+  const totalCrimes = cities.reduce((sum, city) => sum + city.totalCrimes, 0);
   
   return (
     <div className="space-y-6">
