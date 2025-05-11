@@ -375,9 +375,12 @@ export default function ReportModal({ onClose }:any) {
                 required
               >
                 <option value="">Selecciona un tipo de crimen</option>
-                <option value="robo">Robo</option>
+                <option value="robo">Robo con arma de fuego</option>
+                <option value="robo">Robo con arma blanca</option>
                 <option value="asalto">Asalto</option>
                 <option value="robo_de_auto">Robo de vehículo</option>
+                <option value="violacion">Violacion</option>
+                <option value="abuso">Abuso fisico, verbal, psicologico</option>
               </select>
             </div>
             {/* Mostrar alertas */}
