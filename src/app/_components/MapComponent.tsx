@@ -27,7 +27,7 @@ import { useDenunciaData } from '../_store/store';
 import {fromExtent} from 'ol/geom/Polygon.js';
 import { Circle as CircleStyle } from 'ol/style';
 import MultiPoint from 'ol/geom/MultiPoint'
-
+import { useCrimeBar } from '../_store/store';
 
 export default function MapComponent() {
   const mapRef = useRef(null);
@@ -39,6 +39,7 @@ export default function MapComponent() {
   const{currentSearch, setCurrentDataCountry}=useSearchAPI()
   const{collapsedBar}=useModalSidebar()
   const{ setCurrentDenuncia }=useDenunciaData()
+  const{ collapsedCrimeBar, setCollapsedCrimeBar}=useCrimeBar()
 
   //Convertir lat/lng a EPSG:3857
   const features = testReports.map((denuncia) => {
@@ -215,6 +216,7 @@ export default function MapComponent() {
         // Manejar los resultados
         console.log("dataSearch", data)
         setCurrentDataCountry(data)
+        setCollapsedCrimeBar(collapsedCrimeBar)
         // Procesar las zonas para mostrar en el mapa
         if (data.country?.cities) {
           const features = processZonesToFeatures(data.country.cities);

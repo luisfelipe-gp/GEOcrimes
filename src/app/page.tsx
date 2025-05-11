@@ -57,7 +57,7 @@ export default function Home() {
         </div>
         
         <div className="bg-gray-50 rounded-lg p-4 flex flex-col md:flex-row gap-4 items-stretch justify-between border border-gray-200">
-          <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="w-full ">
             <div className="">
               {/* <CountrySelect
                 containerClassName="form-group"
@@ -74,7 +74,7 @@ export default function Home() {
                 }}
                 placeHolder="Selecciona un País"
               /> */}
-              <p className="text-gray-700">Haz clic sobre un país para ver las denuncias registradas en esa región.</p>
+              <p className="text-gray-700 font-bold">Haz clic sobre un país para ver las denuncias registradas en esa región.</p>
               <p className="text-gray-700">Explora el mapa interactivo y selecciona un país para conocer más sobre los reportes realizados.</p>
             </div>
             
