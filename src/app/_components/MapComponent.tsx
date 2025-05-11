@@ -216,7 +216,7 @@ export default function MapComponent() {
         // Manejar los resultados
         console.log("dataSearch", data)
         setCurrentDataCountry(data)
-        setCollapsedCrimeBar(collapsedCrimeBar)
+        setCollapsedCrimeBar(!collapsedCrimeBar)
         // Procesar las zonas para mostrar en el mapa
         if (data.country?.cities) {
           const features = processZonesToFeatures(data.country.cities);
@@ -302,7 +302,41 @@ export default function MapComponent() {
     })
   ];
 
-  
+
+
+  /* useEffect(() => {
+    // Despierta el servidor de Render
+    fetch('https://geocrimes.onrender.com/api/geo/awake')
+      .then(() => console.log('Servidor Render activado'))
+      .catch((err) => console.log('Error al activar servidor:', err));
+  }, []); */
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    const pingServer = async () => {
+      try {
+        const res = await fetch('https://geocrimes.onrender.com/api/geo/awake');
+        if (res.status === 200) {
+          console.log('Servidor despertado correctamente');
+
+          // Luego despiértalo cada 5 minutos (300000 ms)
+          intervalId = setInterval(() => {
+            fetch('https://geocrimes.onrender.com/api/geo/awake');
+          }, 300000); // 5 minutos
+        } else {
+          console.log('Servidor respondió, pero no con 200');
+        }
+      } catch (err) {
+        console.log('Error al despertar el servidor:', err);
+      }
+    };
+
+    pingServer();
+
+    // Cleanup
+    return () => clearInterval(intervalId);
+  }, []);
 
 
   useEffect(() => {

@@ -48,6 +48,7 @@ export default function ReportModal({ onClose }:any) {
 
   // Validar formulario cada vez que cambien los campos
   useEffect(() => {
+    console.log("datos", {country, currentState, currentCity })
     const isValid = (
       country !== null && 
       currentCity !== null && 
@@ -64,7 +65,7 @@ export default function ReportModal({ onClose }:any) {
       crimeType: formData.crimeType === '',
       location: false,
     });
-  }, [country, currentCity, formData.crimeType, formData.sector]);
+  }, [country, currentState, currentCity, formData.crimeType, formData.sector]);
 
     // Ocultar la alerta después de 5 segundos
     useEffect(() => {
@@ -238,13 +239,13 @@ export default function ReportModal({ onClose }:any) {
               </label>
               <CountrySelect
                 containerClassName="w-full"
-                inputClassName={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+                inputClassName={`w-full p-3 border rounded-lg ${
                   errors.country ? 'border-red-500' : 'border-gray-300'
                 }`}
                 onChange={(c: any) => {
                   setCountry(c);
-                  setCurrentState(null);
-                  setCurrentCity(null);
+                  /* setCurrentState(null);
+                  setCurrentCity(null); */
                 }}
                 placeHolder="Selecciona tu país"
               />
@@ -257,8 +258,8 @@ export default function ReportModal({ onClose }:any) {
               <StateSelect
                 countryid={(country as any)?.id}
                 containerClassName="w-full"
-                inputClassName="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                onChange={()=>setCurrentState}
+                inputClassName="w-full p-3 border border-gray-300 rounded-lg"
+                onChange={(s: any)=>{setCurrentState(s)}}
                 placeHolder="Selecciona tu estado"
                 disabled={!country}
               />
@@ -270,13 +271,15 @@ export default function ReportModal({ onClose }:any) {
                 {errors.city && <span className="ml-2 text-sm text-red-600">Este campo es obligatorio</span>}
               </label>
               <CitySelect
-                countryid={(country as any)?.id}
-                stateid={(currentState as any)?.id}
+                countryid={country?.id}
+                stateid={currentState?.id}
                 containerClassName="w-full"
-                inputClassName={`w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
+                inputClassName={`w-full p-3 border rounded-lg ${
                   errors.city ? 'border-red-500' : 'border-gray-300'
                 }`}
-                onChange={()=>setCurrentCity}
+                onChange={(c: any)=>{
+                  console.log("c", c)
+                  setCurrentCity(c)}}
                 placeHolder="Selecciona tu ciudad"
                 disabled={!currentState}
               />
