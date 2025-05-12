@@ -1,12 +1,49 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CountrySelect, StateSelect, CitySelect   } from "react-country-state-city";
+import { CountrySelect, StateSelect, CitySelect  } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
-/* import {ToastProvider } from "@heroui/toast";
-import {addToast, Alert} from "@heroui/react"; */
 import { useModalSidebar } from '../_store/store';
 import { useDenunciaData } from '../_store/store';
+
+interface Country {
+  id: number;
+  name: string;
+  iso3: string;
+  iso2: string;
+  numeric_code: string;
+  phone_code: string;
+  capital: string;
+  currency: string;
+  currency_name: string;
+  currency_symbol: string;
+  tld: string;
+  native: string;
+  region: string;
+  subregion: string;
+  latitude: string;
+  longitude: string;
+  emoji: string;
+  hasStates: boolean;
+}
+
+interface State {
+  id: number;
+  name: string;
+  state_code: string;
+  hasCities: boolean;
+  latitude: string;
+  longitude: string;
+}
+
+interface City {
+  id: number;
+  name: string;
+  latitude: string;
+  longitude: string;
+}
+
+
 
 export default function ReportModal({ onClose }:any) {
   const [formData, setFormData] = useState({
@@ -20,12 +57,13 @@ export default function ReportModal({ onClose }:any) {
       lng:""
     }
   });
-  const [country, setCountry] = useState(null);
-  const [currentState, setCurrentState] = useState(null);
-  const [currentCity, setCurrentCity] = useState(null);
+  const [country, setCountry] = useState<Country | null>(null);
+  const [currentState, setCurrentState] = useState<State | null>(null);
+  const [currentCity, setCurrentCity] = useState<City | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({
     country: false,
+    state: false,
     city: false,
     crimeTime: false,
     crimeType: false,
@@ -39,18 +77,17 @@ export default function ReportModal({ onClose }:any) {
     title: '',
     message: ''
   });
-  // Estado para controlar el modo de selección de ubicación
-  const [isSelectingLocation, setIsSelectingLocation] = useState(false);
-  const [clickListener, setClickListener] = useState(null);
   const{collapsedBar, setCollapsedBar}=useModalSidebar()
+  // Estado para controlar el modo de selección de ubicación
   const{ currentDenuncia, setCurrentDenuncia }=useDenunciaData()
 
-
+  console.log("currentDenuncia", currentDenuncia)
   // Validar formulario cada vez que cambien los campos
   useEffect(() => {
     console.log("datos", {country, currentState, currentCity })
     const isValid = (
       country !== null && 
+      currentState !== null &&
       currentCity !== null && 
       formData.crimeTime !== null &&
       formData.crimeType !== ''
@@ -58,13 +95,13 @@ export default function ReportModal({ onClose }:any) {
     setIsFormValid(isValid);
     
     // Limpiar errores cuando se completan los campos
-    setErrors({
+    /* setErrors({
       country: country === null,
       city: currentCity === null,
       crimeTime: false,
       crimeType: formData.crimeType === '',
       location: false,
-    });
+    }); */
   }, [country, currentState, currentCity, formData.crimeType, formData.sector]);
 
     // Ocultar la alerta después de 5 segundos
@@ -84,63 +121,27 @@ export default function ReportModal({ onClose }:any) {
     
     // Validación adicional antes de enviar
     if (!isFormValid) {
-        /* addToast({
-          title: "Campos incompletos",
-          description: "Por favor completa todos los campos obligatorios",
-          color: "warning",
-        }); */
-        setErrors({
-          country: country === null,
-          city: currentCity === null,
-          crimeTime: true,
-          crimeType: formData.crimeType === '',
-          location: true
-        });
-        return;
-      }
+      setErrors({
+        country: false,
+        state: false,
+        city: false,
+        crimeTime: false,
+        crimeType: formData.crimeType === '',
+        location: false
+      });
+      return;
+    }
   
     setIsSubmitting(true);
     console.log("entra isFormValid", isFormValid)
     try {
-      // Enviar denuncia al backend
-     /*  const addLocationUrl = 'https://mv960jtm-3000.use2.devtunnels.ms/api/geo/addLocation/';
-      const addResponse = await axios.post(addLocationUrl, {
-        "country": country?.name,
-        "city": currentCity?.name,
-        "sector": formData?.sector,
-        "crimeType": formData?.crimeType,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*", // Solo si el backend lo permite
-        },
-      }
-    ); */
-
-      /* if (addResponse.status === 200) {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Éxito',
-          message: 'Denuncia enviada correctamente'
-        });
-        // Limpiar formulario después de éxito
-        setFormData({
-          name: '',
-          phone: '',
-          sector: '',
-          crimeType: '',
-        });
-        onClose();
-      } */
-        console.log("entra try")
-        console.log("entra country?.name", (country as any)?.name)
-        console.log("entra currentCity?", (currentCity as any)?.name)
-        console.log("entra formData?.sector", formData?.sector)
-        console.log("entra formData?.crimeTime", formData?.crimeTime)
-        console.log("entra formData?.crimeType", formData?.crimeType)
-        console.log("entra currentDenuncia", currentDenuncia)
+      console.log("entra try")
+      console.log("entra country?.name", (country as any)?.name)
+      console.log("entra currentCity?", (currentCity as any)?.name)
+      console.log("entra formData?.sector", formData?.sector)
+      console.log("entra formData?.crimeTime", formData?.crimeTime)
+      console.log("entra formData?.crimeType", formData?.crimeType)
+      console.log("entra currentDenuncia", currentDenuncia)
       const addLocationUrlLocal = 'https://mv960jtm-3000.use2.devtunnels.ms/api/geo/addLocation';
       const addLocationUrl = 'https://geocrimes.onrender.com/api/geo/addLocation';
       const addResponse = await fetch(addLocationUrl, {
@@ -208,9 +209,11 @@ export default function ReportModal({ onClose }:any) {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  
-
-
+  const handleCountryChange = (c: Country) => {
+    setCountry(c);
+    setCurrentState(null);
+    setCurrentCity(null);
+  };
 
 
   return (
@@ -232,47 +235,53 @@ export default function ReportModal({ onClose }:any) {
         </div>
         <div className='pt-4'>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
+            <div className='text-black'>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 País <span className="text-red-500">*</span>
                 {errors.country && <span className="ml-2 text-sm text-red-600">Este campo es obligatorio</span>}
               </label>
               <CountrySelect
-                containerClassName="w-full form-group"
+                containerClassName="form-group"
                 inputClassName={`w-full p-3 border rounded-lg ${
                   errors.country ? 'border-red-500' : 'border-gray-300'
                 }`}
-                onChange={(c: any) => {
+                /* onChange={
+                  ((c: Country) => {
+                  console.log("c",c)
                   setCountry(c);
                   setCurrentState(null);
                   setCurrentCity(null);
-                }}
+                }) as unknown as React.ChangeEventHandler<HTMLInputElement>
+                } */
+                onChange={handleCountryChange as unknown as any}
                 placeHolder="Selecciona tu país"
+                autoComplete="off"
               />
             </div>
 
-            <div>
+            <div className='text-black'>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Estado/Departamento <span className="text-red-500">*</span>
               </label>
               <StateSelect
-                countryid={(country as any)?.id}
+                countryid={(country as Country)?.id}
                 containerClassName="form-group"
                 inputClassName="w-full p-3 border border-gray-300 rounded-lg"
                 onChange={(s: any)=>{setCurrentState(s)}}
                 placeHolder="Selecciona tu estado"
                 disabled={!country}
+                autoComplete="off"
               />
             </div>
 
-            <div>
+            <div className='text-black'>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Ciudad <span className="text-red-500">*</span>
                 {errors.city && <span className="ml-2 text-sm text-red-600">Este campo es obligatorio</span>}
               </label>
               <CitySelect
-                countryid={country?.id}
-                stateid={currentState?.id}
+                countryid={(country as Country)?.id}
+                stateid={(currentState as State)?.id}
                 containerClassName="form-group"
                 inputClassName={`w-full p-3 border rounded-lg ${
                   errors.city ? 'border-red-500' : 'border-gray-300'
@@ -282,12 +291,13 @@ export default function ReportModal({ onClose }:any) {
                   setCurrentCity(c)}}
                 placeHolder="Selecciona tu ciudad"
                 disabled={!currentState}
+                autoComplete="off"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Sector {/* <span className="text-red-500">*</span> */}
+                Sector <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -295,6 +305,7 @@ export default function ReportModal({ onClose }:any) {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 value={formData.sector}
                 onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                autoComplete='off'
               />
             </div>
             <div>
@@ -353,12 +364,22 @@ export default function ReportModal({ onClose }:any) {
                         />
                       </div>
                     </div>
-                    <div className="mt-2 flex items-center text-green-600 text-sm">
+                    {currentDenuncia.lat === 0 && currentDenuncia.lng === 0 ? (
+                      <div className="mt-2 flex items-center text-red-600 text-sm">
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 12H6" />
+                        </svg>
+                        Selecciona una ubicación
+                      </div>
+                    ): (
+                      <div className="mt-2 flex items-center text-green-600 text-sm">
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                       </svg>
                       Ubicación seleccionada
                     </div>
+                    )}
+                    
                   </div>
                 )}
               </div>
@@ -454,3 +475,4 @@ export default function ReportModal({ onClose }:any) {
     </div>
   );
 }
+

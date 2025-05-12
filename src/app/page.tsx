@@ -9,7 +9,6 @@ import {useSearchAPI, useCrimeBar, useModalSidebar} from "./_store/store";
 import CrimeSidebar from "./_components/CrimeSidebar";
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [country, setCountry] = useState(null);
   /* const [currentState, setCurrentState] = useState(null);
   const [currentCity, setCurrentCity] = useState(null);
@@ -46,7 +45,6 @@ export default function Home() {
           </div>
           <button
             onClick={() => {
-              setIsModalOpen(true)
               setCollapsedBar(!collapsedBar)
             }}
             className="bg-rose-400 hover:bg-rose-500 text-white px-5 py-2 rounded-xl font-medium shadow-md hover:shadow-lg transition-transform hover:-translate-y-0.5"
@@ -110,7 +108,7 @@ export default function Home() {
 
       {/* Modal */}
       {collapsedBar && (
-        <ReportModal onClose={() => setIsModalOpen(false)} isModalOpen={isModalOpen} />
+        <ReportModal onClose={() => setCollapsedBar(false)}/>
       )}
       </main>
     </div>
